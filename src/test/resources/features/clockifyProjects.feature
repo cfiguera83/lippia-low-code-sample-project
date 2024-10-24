@@ -21,9 +21,9 @@ Feature: Projects
     When execute method GET
     Then the status code should be 200
     And response should be $.[5].name = Vigo
-    * define projectId = $.[5].name
+    * define projectId = $.[5].id
 
-  @Project @findProjectById @Do
+  @Project @findProjectById
   Scenario: Find project by id successfully
     Given call clockifyProjects.feature@getAllProjects
     And base url $(env.base_url_clockify)
@@ -40,8 +40,8 @@ Feature: Projects
     And endpoint /v1/workspaces/{{workspaceId}}/projects/{{projectId}}
     And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
     And header Content-Type = application/json
-    And body jsons/bodies/updateProject.json
-    When execute method GET
+    And set value "Prueba" of key note in body jsons/bodies/updateProject.json
+    When execute method PUT
     Then the status code should be 200
 
   @Project @BadRequestfindProjectById
@@ -71,7 +71,7 @@ Feature: Projects
     When execute method GET
     Then the status code should be 404
 
-  @Project @deleteProject
+  @Project @deleteProject @Do
   Scenario: Delete project successfully
     Given call clockifyProjects.feature@getAllProjects
     And base url $(env.base_url_clockify)
