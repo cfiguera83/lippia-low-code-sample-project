@@ -61,17 +61,16 @@ Feature: Projects
     When execute method GET
     Then the status code should be 401
 
-
   @Project @findProjectByInvalidId
   Scenario: Find project by invalid id successfully
     Given call clockifyProjects.feature@getAllProjects
     And base url $(env.base_url_clockify)
-    And endpoint /v1/workspaces/{{workspaceId}}/projects/{{projectId}}
+    And endpoint /v1/workspaces/6716c04becee593703a7eb18/project/6717f2d8814afb63a579a9a3
     And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
     When execute method GET
     Then the status code should be 404
 
-  @Project @deleteProject @Do
+  @Project @deleteProject
   Scenario: Delete project successfully
     Given call clockifyProjects.feature@getAllProjects
     And base url $(env.base_url_clockify)
