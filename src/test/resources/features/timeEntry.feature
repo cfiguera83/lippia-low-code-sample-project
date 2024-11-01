@@ -1,44 +1,22 @@
-@timeEntry
+@Clockify
 Feature: Time entry
 
-
-  @Clockify @getTimeEntry
-  Scenario: Get time entries for a user on workspace successfully
-    Given call User.feature@GetMemberProfile
-    And base url $(env.base_url_clockify)
-    And endpoint /v1/workspaces/{{workspaceIdMilan}}/user/{{userIdCarlos}}/time-entries
-    And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
-    When execute method GET
-    Then the status code should be 200
-
-
-  @Clockify @getEspecificTimeEntry
-  Scenario: Get a specific time entry on workspace successfully
-    Given base url $(env.base_url_clockify)
-    And endpoint /api/v1/workspaces/6716c04becee593703a7eb18/time-entries/671fc2be4a18d82e10071ba2
-    And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
-    When execute method GET
-    Then the status code should be 200
-    * define timeEntryCarlos = id
-
-
-   @Clockify @AddNewTimeEntry
-   Scenario: Add a new time entry successfully
-     Given base url $(env.base_url_clockify)
-     And endpoint /api/v1/workspaces/6716c04becee593703a7eb18/time-entries
+   @timeEntry @getTimeEntries
+   Scenario: Get time entries for a user on workspace successfully
+     Given call User.feature@findAllUsersOnWorkspace
+     And base url $(env.base_url_clockify)
+     And endpoint /v1/workspaces/{{workspaceIdMilan}}/user/{{userIdCarlos}}/time-entries
      And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
-     And header Accept = */*
-     And header Content-Type = application/json
-     And body jsons/bodies/addTimeEntry.json
-     When execute method POST
-     Then the status code should be 201
-     * define timeEntryTest = id
+     When execute method GET
+     Then the status code should be 200
+     And response should be $.[0].description = Automation Test
+     * define timeEntryIdAutomation = $.[0].id
 
-
-   @Clockify @UpdateTimeEntry
+  @timeEntry @updateTimeEntry
    Scenario: Update time entry on workspace successfully
-     Given base url $(env.base_url_clockify)
-     And endpoint /api/v1/workspaces/6716c04becee593703a7eb18/time-entries/671fbafb4ce4600d320feec3
+     Given call timeEntry.feature@getTimeEntries
+     And base url $(env.base_url_clockify)
+     And endpoint /v1/workspaces/{{workspaceIdMilan}}/time-entries/{{timeEntryIdAutomation}}
      And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
      And header Accept = */*
      And header Content-Type = application/json
@@ -46,11 +24,35 @@ Feature: Time entry
      When execute method PUT
      Then the status code should be 200
 
+   @addNewTimeEntry
+   Scenario: Add a new time entry successfully
+     Given call timeEntry.feature@getTimeEntries
+     And base url $(env.base_url_clockify)
+     And endpoint /v1/workspaces/{{workspaceIdMilan}}/time-entries
+     And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
+     And header Accept = */*
+     And header Content-Type = application/json
+     And body jsons/bodies/addTimeEntry.json
+     When execute method POST
+     Then the status code should be 201
+     And response should be description = TP Final
 
-   @Clockify @DeleteTimeEntry @Do
-   Scenario: Delete time entry from workspace
-     Given base url $(env.base_url_clockify)
-     And endpoint /v1/workspaces/6716c04becee593703a7eb18/time-entries/671fdd23a75c3e4ef3b47f72
+   @timeEntry @getTimeEntriesTPFinal
+   Scenario: Get time entries for a user on workspace successfully
+     Given call User.feature@findAllUsersOnWorkspacePrueba
+     And base url $(env.base_url_clockify)
+     And endpoint /v1/workspaces/{{workspaceIdMilan}}/user/{{userIdPrueba}}/time-entries
+     And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
+     When execute method GET
+     Then the status code should be 200
+     And response should be $.[19].description = TP Final
+     * define timeEntryTPFinal = $.[19].id
+
+  @timeEntry @DeleteTimeEntry
+   Scenario: Delete time entry from workspace successfully
+     Given call timeEntry.feature@addNewTimeEntry
+     And base url $(env.base_url_clockify)
+     And endpoint /v1/workspaces/{{workspaceIdMilan}}/time-entries/{{timeEntryTPFinal}}
      And header x-api-key = M2JmMGEwNDEtYzYyMC00MzY5LThlMjktMjYyMDFkM2I1NzVm
      When execute method DELETE
      Then the status code should be 204
